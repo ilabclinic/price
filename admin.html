@@ -1,179 +1,98 @@
-<!-- admin.html -->
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>لوحة المدير - iLab</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>إدارة فحوصات iLab</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --bg:#f4f7fb; --card:#ffffff; --accent:#0f6fa6; --muted:#6b7280; --success:#16a34a;
-    --glass: rgba(255,255,255,0.7);
-  }
-  *{box-sizing:border-box}
-  body{font-family:'Cairo',sans-serif;background:linear-gradient(180deg,#eef6fb 0%,var(--bg) 100%);margin:0;padding:28px;color:#0b2540;direction:rtl}
-  .wrap{max-width:980px;margin:0 auto}
-  header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
-  h1{margin:0;font-size:20px;color:var(--accent)}
-  .sub{color:var(--muted);font-size:13px}
-  .grid{display:grid;grid-template-columns:1fr 360px;gap:18px;align-items:start}
-  .card{background:var(--card);border-radius:14px;padding:18px;box-shadow:0 6px 20px rgba(16,24,40,0.06)}
-  label{display:block;font-weight:600;margin-top:10px;font-size:14px}
-  input[type="text"], input[type="number"], select{width:100%;padding:10px;border-radius:8px;border:1px solid #e6edf3;margin-top:6px;font-size:14px}
-  button{background:var(--accent);color:#fff;padding:10px 14px;border-radius:10px;border:0;cursor:pointer;margin-top:12px;font-weight:600}
-  button.ghost{background:transparent;color:var(--accent);border:1px solid #d3e8f5}
-  .list{max-height:420px;overflow:auto;margin-top:10px}
-  .row{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:8px;border:1px solid #f0f6fb;margin-bottom:8px}
-  .name{font-weight:600}
-  .price{color:var(--muted)}
-  .small{font-size:13px;color:var(--muted)}
-  .message{margin-top:8px;padding:10px;background:#f0fdf4;color:var(--success);border-radius:8px;display:none}
-  footer{margin-top:18px;color:var(--muted);font-size:13px;text-align:center}
-  @media (max-width:880px){.grid{grid-template-columns:1fr;}.card{padding:14px}}
+:root{
+  --bg:#f7fbff; --card:#ffffff; --accent:#0f6fa6; --accent-2:#0fa37a; --muted:#6b7280;
+  --shadow:0 6px 30px rgba(2,6,23,0.08);
+}
+*{box-sizing:border-box}
+body{font-family:'Cairo',sans-serif;background:linear-gradient(180deg,var(--bg),#eef6f8);margin:0;padding:22px;direction:rtl;color:#043047}
+.wrap{max-width:980px;margin:0 auto}
+header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:12px}
+h1{margin:0;font-size:22px;color:var(--accent)}
+.sub{color:var(--muted);font-size:13px}
+.layout{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+.card{background:var(--card);padding:20px;border-radius:18px;box-shadow:var(--shadow);transition:0.3s}
+.card:hover{box-shadow:0 12px 40px rgba(2,6,23,0.15);transform:translateY(-2px)}
+.title{font-weight:700;color:#08304a;margin-bottom:10px}
+input[type="text"], input[type="number"]{width:100%;padding:10px;border-radius:12px;border:1px solid #e8f1f7;margin-bottom:12px;outline:none;transition:0.3s}
+input:focus{border-color:var(--accent-2);box-shadow:0 0 10px rgba(15,111,166,0.2)}
+.btn{background: linear-gradient(135deg,#0f6fa6,#0fa37a);color:#fff;padding:12px;border-radius:12px;border:0;cursor:pointer;font-weight:700;transition:0.3s;letter-spacing:1px}
+.btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(15,111,166,0.3)}
+.result{margin-top:15px;padding:12px;border-radius:12px;background:#f0f9ff;color:#043047;box-shadow:0 4px 20px rgba(0,0,0,0.05)}
+@media(max-width:880px){.layout{grid-template-columns:1fr}.card{padding:16px}}
 </style>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <div>
-        <h1>لوحة المدير — iLab</h1>
-        <div class="sub">أضف/عدل الفحوصات والكوبونات بسرعة وأمان</div>
-      </div>
-      <div class="small">مربوط بـ WebApp API</div>
-    </header>
+<div class="wrap">
+<header>
+  <div>
+    <h1>إدارة فحوصات وكوبونات iLab</h1>
+    <div class="sub">أضف فحوصات جديدة أو كوبونات خصم بسهولة وفخامة</div>
+  </div>
+</header>
 
-    <div class="grid">
-      <!-- يسار: التحكم -->
-      <div class="card">
-        <h3>➕ إضافة فحص جديد</h3>
-        <label>اسم الفحص</label>
-        <input id="testName" type="text" placeholder="مثال: فحص CRP">
-        <label>السعر (دينار)</label>
-        <input id="testPrice" type="number" placeholder="مثال: 20">
-
-        <button onclick="onAddTest()">أضف الفحص</button>
-
-        <hr style="margin:18px 0;border:none;border-top:1px solid #f0f6fb">
-
-        <h3>🎟️ إضافة كوبون</h3>
-        <label>كود الكوبون</label>
-        <input id="couponCode" type="text" placeholder="مثال: ILAB10">
-        <label>نوع الخصم</label>
-        <select id="couponType">
-          <option value="percent">نسبة مئوية %</option>
-          <option value="fixed">مبلغ ثابت</option>
-        </select>
-        <label>القيمة (مثلاً: 10 أو 5)</label>
-        <input id="couponValue" type="number" placeholder="قيمة الخصم">
-
-        <button onclick="onAddCoupon()">أضف الكوبون</button>
-
-        <div id="msg" class="message"></div>
-      </div>
-
-      <!-- يمين: عرض القوائم -->
-      <div>
-        <div class="card" style="margin-bottom:12px">
-          <h3>قائمة الفحوصات الحالية</h3>
-          <div id="testsList" class="list">
-            جاري التحميل...
-          </div>
-        </div>
-
-        <div class="card">
-          <h3>قائمة الكوبونات الحالية</h3>
-          <div id="couponsList" class="list">
-            جاري التحميل...
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <footer>تأكد من إعادة نشر الويب آب بعد تعديل السكربت. تم تصميم الواجهة لتكون بسيطة وسريعة الاستخدام.</footer>
+<div class="layout">
+  <!-- اليسار: إضافة فحص -->
+  <div class="card">
+    <div class="title">➕ إضافة فحص جديد</div>
+    <input type="text" id="testName" placeholder="اسم الفحص">
+    <input type="number" id="testPrice" placeholder="السعر بالدينار">
+    <button class="btn" onclick="addTest()">إضافة الفحص</button>
+    <div id="testResult" class="result"></div>
   </div>
 
+  <!-- اليمين: إضافة كوبون -->
+  <div class="card">
+    <div class="title">🎟️ إضافة كوبون خصم</div>
+    <input type="text" id="couponCode" placeholder="كود الكوبون">
+    <select id="couponType">
+      <option value="percent">نسبة مئوية (%)</option>
+      <option value="fixed">قيمة ثابتة</option>
+    </select>
+    <input type="number" id="couponValue" placeholder="قيمة الخصم">
+    <button class="btn" onclick="addCoupon()">إضافة الكوبون</button>
+    <div id="couponResult" class="result"></div>
+  </div>
+</div>
+</div>
+
 <script>
-  const API = "https://script.google.com/macros/s/AKfycbw-LYZhxTiVzFU9F_OWZgWZGXvmFsfmp5UbcFP0x27OYHis6EYSWBgdse34i4Wkj9Wm/exec";
+const API = "https://script.google.com/macros/s/AKfycbw-LYZhxTiVzFU9F_OWZgWZGXvmFsfmp5UbcFP0x27OYHis6EYSWBgdse34i4Wkj9Wm/exec";
 
-  function showMsg(text, ok=true) {
-    const el = document.getElementById('msg');
-    el.style.display = 'block';
-    el.style.background = ok ? '#f0fdf4' : '#fff4f4';
-    el.style.color = ok ? '#166534' : '#b91c1c';
-    el.innerText = text;
-    setTimeout(()=> el.style.display='none', 4000);
-  }
+// إضافة فحص جديد
+async function addTest(){
+  const name=document.getElementById('testName').value.trim();
+  const price=parseFloat(document.getElementById('testPrice').value);
+  const resDiv=document.getElementById('testResult');
+  if(!name || isNaN(price)){ resDiv.innerText='الرجاء إدخال اسم الفحص والسعر الصحيح'; return; }
+  try{
+    const resp=await fetch(`${API}?action=addTest&name=${encodeURIComponent(name)}&price=${price}`);
+    const data=await resp.json();
+    resDiv.innerText=data.status || 'تمت الإضافة بنجاح';
+    document.getElementById('testName').value=''; document.getElementById('testPrice').value='';
+  }catch(e){resDiv.innerText='حدث خطأ أثناء الإضافة'; console.error(e);}
+}
 
-  async function fetchLists(){
-    try{
-      const t = await fetch(API + '?action=getTests').then(r=>r.json());
-      const c = await fetch(API + '?action=getCoupons').then(r=>r.json());
-      renderTests(t || []);
-      renderCoupons(c || []);
-    }catch(err){
-      document.getElementById('testsList').innerText='فشل تحميل البيانات';
-      document.getElementById('couponsList').innerText='فشل تحميل البيانات';
-      console.error(err);
-    }
-  }
-
-  function renderTests(data){
-    const out = document.getElementById('testsList');
-    out.innerHTML = '';
-    if(!data.length){ out.innerHTML = '<div class="small">لا توجد فحوصات مسجلة</div>'; return; }
-    data.forEach(row=>{
-      const name = row[0] || '—';
-      const price = row[1] || '—';
-      const div = document.createElement('div');
-      div.className='row';
-      div.innerHTML = `<div><div class="name">${escapeHtml(name)}</div><div class="small">وصف اختياري</div></div><div class="price">${escapeHtml(price)} د.ا</div>`;
-      out.appendChild(div);
-    });
-  }
-
-  function renderCoupons(data){
-    const out = document.getElementById('couponsList');
-    out.innerHTML = '';
-    if(!data.length){ out.innerHTML = '<div class="small">لا توجد كوبونات</div>'; return; }
-    data.forEach(row=>{
-      const code = row[0]||'—';
-      const type = row[1]||'—';
-      const val = row[2]||'—';
-      const div = document.createElement('div');
-      div.className='row';
-      div.innerHTML = `<div><div class="name">${escapeHtml(code)}</div><div class="small">${escapeHtml(type)} • القيمة: ${escapeHtml(val)}</div></div><div class="price">${type==='percent'?val+'%':val+' د.ا'}</div>`;
-      out.appendChild(div);
-    });
-  }
-
-  function escapeHtml(s){ return (s+'').replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m])); }
-
-  async function onAddTest(){
-    const name = document.getElementById('testName').value.trim();
-    const price = document.getElementById('testPrice').value.trim();
-    if(!name || !price){ showMsg('الرجاء تعبئة الاسم والسعر', false); return; }
-    try{
-      const res = await fetch(API + `?action=addTest&test=${encodeURIComponent(name)}&price=${encodeURIComponent(price)}`);
-      const j = await res.json();
-      if(j.error) showMsg(j.error, false); else { showMsg(j.result || 'تمت الإضافة'); fetchLists(); document.getElementById('testName').value=''; document.getElementById('testPrice').value=''; }
-    }catch(e){ showMsg('فشل الإضافة', false); console.error(e); }
-  }
-
-  async function onAddCoupon(){
-    const code = document.getElementById('couponCode').value.trim();
-    const type = document.getElementById('couponType').value;
-    const value = document.getElementById('couponValue').value.trim();
-    if(!code || !type || !value){ showMsg('الرجاء تعبئة حقول الكوبون كلها', false); return; }
-    try{
-      const res = await fetch(API + `?action=addCoupon&code=${encodeURIComponent(code)}&type=${encodeURIComponent(type)}&value=${encodeURIComponent(value)}`);
-      const j = await res.json();
-      if(j.error) showMsg(j.error, false); else { showMsg(j.result || 'تمت إضافة الكوبون'); fetchLists(); document.getElementById('couponCode').value=''; document.getElementById('couponValue').value=''; }
-    }catch(e){ showMsg('فشل إضافة الكوبون', false); console.error(e); }
-  }
-
-  // init
-  fetchLists();
+// إضافة كوبون جديد
+async function addCoupon(){
+  const code=document.getElementById('couponCode').value.trim();
+  const type=document.getElementById('couponType').value;
+  const value=parseFloat(document.getElementById('couponValue').value);
+  const resDiv=document.getElementById('couponResult');
+  if(!code || isNaN(value)){ resDiv.innerText='الرجاء إدخال الكود والقيمة الصحيحة'; return; }
+  try{
+    const resp=await fetch(`${API}?action=addCoupon&code=${encodeURIComponent(code)}&type=${type}&value=${value}`);
+    const data=await resp.json();
+    resDiv.innerText=data.status || 'تمت إضافة الكوبون بنجاح';
+    document.getElementById('couponCode').value=''; document.getElementById('couponValue').value='';
+  }catch(e){resDiv.innerText='حدث خطأ أثناء الإضافة'; console.error(e);}
+}
 </script>
 </body>
 </html>
